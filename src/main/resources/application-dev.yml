@@ -1,0 +1,12 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/escrow_db}
+    username: ${DATABASE_USERNAME:escrow_user}
+    password: ${DATABASE_PASSWORD:escrow_password}
+
+  jpa:
+    show-sql: true

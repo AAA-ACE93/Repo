@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: escrow-postgres
+    environment:
+      POSTGRES_DB: escrow_db
+      POSTGRES_USER: escrow_user
+      POSTGRES_PASSWORD: escrow_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U escrow_user -d escrow_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: escrow-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_URL: jdbc:postgresql://postgres:5432/escrow_db
+      DATABASE_USERNAME: escrow_user
+      DATABASE_PASSWORD: escrow_password
+      JWT_SECRET: 9a2f8c4e1b7d5a0e3f2c8b9a1d4e6f8c2b5a7d9e1f3c5b7a9d2e4f6c8b0a2d4e
+      PAYMENT_PROVIDER_API_KEY: mock_api_key_secret_12345
+      PAYMENT_WEBHOOK_SECRET: mock_webhook_secret_67890
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
