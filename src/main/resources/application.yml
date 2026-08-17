@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: escrow-platform
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/escrow_db}
+    username: ${DATABASE_USERNAME:escrow_user}
+    password: ${DATABASE_PASSWORD:escrow_password}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:9a2f8c4e1b7d5a0e3f2c8b9a1d4e6f8c2b5a7d9e1f3c5b7a9d2e4f6c8b0a2d4e}
+    expiration-ms: 86400000 # 24 hours
+  payment:
+    api-key: ${PAYMENT_PROVIDER_API_KEY:mock_api_key_secret_12345}
+    webhook-secret: ${PAYMENT_WEBHOOK_SECRET:mock_webhook_secret_67890}
+  storage:
+    s3-endpoint: ${S3_ENDPOINT:http://localhost:9000}
+    s3-access-key: ${S3_ACCESS_KEY:minioaccesskey}
+    s3-secret-key: ${S3_SECRET_KEY:miniosecretkey}
+    bucket-name: ${S3_BUCKET:escrow-dispute-evidence}
+  email:
+    api-key: ${EMAIL_PROVIDER_API_KEY:mock_email_key_00000}
+  escrow:
+    auto-release-delay-days: 14
+
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
